@@ -1,33 +1,30 @@
-/*
-* Copyright (C) 2009-2020 SAP SE or an SAP affiliate company. All rights reserved
-*/
 package org.nana.exam.coins.controller;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.nana.exam.coins.dto.CoinDTO;
-import org.nana.exam.coins.service.CoinsService;
+import org.nana.exam.coins.dto.CoinExamDTO;
+import org.nana.exam.coins.service.ExternalApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @author i068309
- *
- */
 @RestController
 public class CoinsController {
 
 	@Autowired
-	private CoinsService coinsService;
-	
-	@GetMapping("/")
-	public List<CoinDTO> get() {
-		return coinsService.fetchAll();
+	private ExternalApiService externalApiService;
+
+	@GetMapping("/coins/{symbol}")
+	public CoinExamDTO getCoin(@PathVariable String symbol) {
+		return externalApiService.getCoin(symbol);
 	}
-	
-	@GetMapping("/add")
-	public void addCoin(){
-		coinsService.addCoin();
+
+	@GetMapping("/coins")
+	public List<CoinExamDTO> getCoins(@RequestParam(name = "algorithm", required = false) Optional<String> algorithm,
+			@RequestParam(name = "symbol", required = false) Optional<List<String>> symbols) {
+		return externalApiService.getCoinNames(algorithm, symbols);
 	}
 }
